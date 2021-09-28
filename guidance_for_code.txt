@@ -1,0 +1,43 @@
+Written in C++, 
+Serial code compiled with g++ 6.3.0 (g++ -O3 dipole_field_serial.cpp) 
+Parallel code compiled with mpiCC 6.3.0 (mpiCC -O3 dipole_field_parallel.cpp) MPI 3.1.2
+Minimum values of rx,ry,rz=0.6nm
+
+I ran the code on YARCC with the following sun grid script and qsub
+=================================================================================================
+#!/bin/bash
+
+#This is a generic script to execute a parallel command on jorvik using Sun Grid Engine
+#Lines beginning with one "#" are comment lines and ignored
+#Lines beginning with "#$" are instructions to the qsub command
+
+#specify export QSUB vars to shell script
+#$ -V -j y -R y 
+
+#specify which queue 
+#$ -q phys-lab
+
+#execute script from current working directory 
+#$ -cwd
+
+#select max run-time
+#$ -l h_rt=00:90:00
+
+#select parallel environment to run on nn cores, max 16 cores/node (240 max)
+#$ -pe mpi 1
+
+#Gives exclusive use of the node to task
+#$ -l exclusive
+
+#name of MPI executable
+EXEC=./a.out
+
+#any additional arguments to pass to the executable
+ARGS= 
+
+#double check environment
+source /home/ebor.modulerc
+
+#set job running
+mpirun --map-by core -np  $NSLOTS $EXEC $ARGS
+=================================================================================================
